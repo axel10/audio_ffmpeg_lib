@@ -46,7 +46,31 @@ target_compile_definitions(${PLUGIN_NAME} PRIVATE FLUTTER_PLUGIN_IMPL)
 # dependencies here.
 target_include_directories(${PLUGIN_NAME} INTERFACE
   "${CMAKE_CURRENT_SOURCE_DIR}/include")
-target_link_libraries(${PLUGIN_NAME} PRIVATE flutter flutter_wrapper_plugin)
+
+# Find FFmpeg components
+# FFmpeg in vcpkg is typically found via FFMPEG (all caps) but often requires a Find module.
+# To be robust in Flutter's build environment, we search the paths manually.
+set(_ffmpeg_search_paths "D:/vcpkg/installed/x64-windows")
+if(DEFINED VCPKG_INSTALLED_DIR)
+  list(INSERT _ffmpeg_search_paths 0 "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}")
+endif()
+
+find_path(FFMPEG_INCLUDE_DIR NAMES libavcodec/avcodec.h PATHS ${_ffmpeg_search_paths} PATH_SUFFIXES include)
+if(FFMPEG_INCLUDE_DIR)
+  target_include_directories(${PLUGIN_NAME} PRIVATE ${FFMPEG_INCLUDE_DIR})
+endif()
+
+target_link_libraries(${PLUGIN_NAME} PRIVATE 
+  flutter 
+  flutter_wrapper_plugin
+)
+
+foreach(lib avcodec avformat avfilter swresample avutil)
+  find_library(FFMPEG_${lib}_LIBRARY NAMES ${lib} PATHS ${_ffmpeg_search_paths} PATH_SUFFIXES lib)
+  if(FFMPEG_${lib}_LIBRARY)
+    target_link_libraries(${PLUGIN_NAME} PRIVATE ${FFMPEG_${lib}_LIBRARY})
+  endif()
+endforeach()
 
 # List of absolute paths to libraries that should be bundled with the plugin.
 # This list could contain prebuilt libraries, or libraries created by an
@@ -54,11 +78,16 @@ target_link_libraries(${PLUGIN_NAME} PRIVATE flutter flutter_wrapper_plugin)
 set(audio_ffmpeg_lib_bundled_libraries
   ""
 )
-file(GLOB _ffmpeg_shared_libraries CONFIGURE_DEPENDS
-  "D:/vcpkg/installed/x64-windows/bin/*.dll")
-if(_ffmpeg_shared_libraries)
-  list(APPEND audio_ffmpeg_lib_bundled_libraries ${_ffmpeg_shared_libraries})
+
+# Bundle all DLLs from vcpkg's bin directory
+if(DEFINED VCPKG_INSTALLED_DIR)
+  file(GLOB _vcpkg_dlls CONFIGURE_DEPENDS
+    "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/*.dll")
+  if(_vcpkg_dlls)
+    list(APPEND audio_ffmpeg_lib_bundled_libraries ${_vcpkg_dlls})
+  endif()
 endif()
+
 if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   set(audio_ffmpeg_lib_bundled_libraries "${audio_ffmpeg_lib_bundled_libraries}" PARENT_SCOPE)
 endif()
@@ -77,7 +106,7 @@ enable_testing()
 include(FetchContent)
 FetchContent_Declare(
   googletest
-  URL https://github.com/google/googletest/archive/release-1.11.0.zip
+  URL https://github.com/google/googletest/archive/refs/tags/v1.15.2.zip
 )
 # Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
