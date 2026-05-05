@@ -46,8 +46,16 @@ target_link_libraries(${PLUGIN_NAME} PRIVATE PkgConfig::GTK)
 # external build triggered from this build file.
 set(audio_ffmpeg_lib_bundled_libraries
   ""
-  PARENT_SCOPE
 )
+file(GLOB _ffmpeg_shared_libraries CONFIGURE_DEPENDS
+  "${CMAKE_CURRENT_SOURCE_DIR}/../build/ffmpeg-linux/install/lib/*.so"
+  "${CMAKE_CURRENT_SOURCE_DIR}/../build/ffmpeg-linux/install/lib/*.so.*")
+if(_ffmpeg_shared_libraries)
+  list(APPEND audio_ffmpeg_lib_bundled_libraries ${_ffmpeg_shared_libraries})
+endif()
+if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+  set(audio_ffmpeg_lib_bundled_libraries "${audio_ffmpeg_lib_bundled_libraries}" PARENT_SCOPE)
+endif()
 
 # === Tests ===
 # These unit tests can be run from a terminal after building the example.

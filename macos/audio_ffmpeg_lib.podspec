@@ -3,6 +3,7 @@
 # Run `pod lib lint audio_ffmpeg_lib.podspec` to validate before publishing.
 #
 Pod::Spec.new do |s|
+  ffmpeg_lib_root = '$(PODS_ROOT)/../Flutter/ephemeral/.symlinks/plugins/audio_ffmpeg_lib/macos/ffmpeg_lib'
   s.name             = 'audio_ffmpeg_lib'
   s.version          = '0.0.1'
   s.summary          = 'A new Flutter plugin project.'
@@ -21,6 +22,17 @@ A new Flutter plugin project.
   # privacy impact, and then uncomment this line. For more information,
   # see https://developer.apple.com/documentation/bundleresources/privacy_manifest_files
   # s.resource_bundles = {'audio_ffmpeg_lib_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
+
+  s.script_phase = {
+    :name => 'Ensure FFmpeg assets',
+    :script => 'bash "$PODS_TARGET_SRCROOT/../tooling/ensure_ffmpeg_assets.sh" macos $ARCHS',
+    :execution_position => :before_compile,
+    :input_files => ['${BUILT_PRODUCTS_DIR}/cargokit_phony'],
+    :output_files => [
+      "#{ffmpeg_lib_root}/arm64/lib/libavformat.a",
+      "#{ffmpeg_lib_root}/amd64/lib/libavformat.a",
+    ],
+  }
 
   s.dependency 'FlutterMacOS'
 

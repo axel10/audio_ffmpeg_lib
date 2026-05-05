@@ -3,6 +3,7 @@
 # Run `pod lib lint audio_ffmpeg_lib.podspec` to validate before publishing.
 #
 Pod::Spec.new do |s|
+  ffmpeg_lib_root = '$(PODS_ROOT)/../Flutter/ephemeral/.symlinks/plugins/audio_ffmpeg_lib/ios/ffmpeg_lib'
   s.name             = 'audio_ffmpeg_lib'
   s.version          = '0.0.1'
   s.summary          = 'A new Flutter plugin project.'
@@ -14,6 +15,17 @@ A new Flutter plugin project.
   s.author           = { 'Your Company' => 'email@example.com' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
+  s.script_phase = {
+    :name => 'Ensure FFmpeg assets',
+    :script => 'bash "$PODS_TARGET_SRCROOT/../tooling/ensure_ffmpeg_assets.sh" ios $ARCHS',
+    :execution_position => :before_compile,
+    :input_files => ['${BUILT_PRODUCTS_DIR}/cargokit_phony'],
+    :output_files => [
+      "#{ffmpeg_lib_root}/arm64/lib/libavformat.a",
+      "#{ffmpeg_lib_root}/arm64-sim/lib/libavformat.a",
+    ],
+  }
+
   s.dependency 'Flutter'
   s.platform = :ios, '13.0'
 
