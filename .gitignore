@@ -35,4 +35,4 @@ migrate_working_dir/
 fdk-aac-*/
 lame-*/
 opus-*/
-ffmpeg-*/
+ffmpeg-8.1

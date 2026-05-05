@@ -1,21 +1,4 @@
 {
   "name": "audio-ffmpeg-lib",
-  "version": "0.0.1",
-  "dependencies": [
-    {
-      "name": "ffmpeg",
-      "default-features": false,
-      "features": [
-        "avcodec",
-        "avformat",
-        "avfilter",
-        "swresample",
-        "fdk-aac",
-        "opus",
-        "mp3lame",
-        "gpl",
-        "nonfree"
-      ]
-    }
-  ]
+  "version": "0.0.1"
 }
