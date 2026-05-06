@@ -205,7 +205,7 @@ for arch in "${ARCHS[@]}"; do
     --disable-filters
     --enable-filter=abuffer,abuffersink,anull,aresample,aformat
     --enable-small
-    --enable-gpl
+    --disable-gpl
     --enable-pic
     --disable-shared
     --enable-static

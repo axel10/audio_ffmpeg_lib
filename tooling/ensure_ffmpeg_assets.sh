@@ -35,14 +35,12 @@ asset_name_for() {
   local arch="$2"
 
   case "${target_platform}:${arch}" in
-    ios:arm64) echo "audio_ffmpeg_lib-ffmpeg-ios-arm64.zip" ;;
-    ios:arm64-sim) echo "audio_ffmpeg_lib-ffmpeg-ios-arm64-sim.zip" ;;
-    macos:arm64) echo "audio_ffmpeg_lib-ffmpeg-macos-arm64.zip" ;;
-    macos:x86_64) echo "audio_ffmpeg_lib-ffmpeg-macos-x86_64.zip" ;;
-    android:arm64-v8a) echo "audio_ffmpeg_lib-ffmpeg-android-arm64-v8a.zip" ;;
-    android:armeabi-v7a) echo "audio_ffmpeg_lib-ffmpeg-android-armeabi-v7a.zip" ;;
-    android:x86) echo "audio_ffmpeg_lib-ffmpeg-android-x86.zip" ;;
-    android:x86_64) echo "audio_ffmpeg_lib-ffmpeg-android-x86_64.zip" ;;
+    ios:arm64) echo "audio_ffmpeg_lib-ios-arm64.zip" ;;
+    ios:arm64-sim) echo "audio_ffmpeg_lib-ios-arm64-sim.zip" ;;
+    macos:arm64) echo "audio_ffmpeg_lib-macos-arm64.zip" ;;
+    macos:x86_64) echo "audio_ffmpeg_lib-macos-x86_64.zip" ;;
+    android:arm64-v8a) echo "audio_ffmpeg_lib-android-arm64-v8a.zip" ;;
+    android:armeabi-v7a) echo "audio_ffmpeg_lib-android-armeabi-v7a.zip" ;;
     *)
       echo "Unsupported platform/arch combination: ${target_platform}:${arch}" >&2
       return 1

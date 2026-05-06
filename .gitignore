@@ -36,3 +36,5 @@ fdk-aac-*/
 lame-*/
 opus-*/
 ffmpeg-8.1
+
+ffmpeg_lib
